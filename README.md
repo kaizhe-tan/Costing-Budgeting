@@ -1,1 +1,1075 @@
-# Costing-Budgeting
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Financial Dashboard — CEO Audit Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10233F;
+    --ink-soft:#1B3A63;
+    --paper:#F3F5F3;
+    --card:#FFFFFF;
+    --teal:#0F766E;
+    --teal-soft:#E4F1EF;
+    --amber:#C2792B;
+    --amber-soft:#FBF0E1;
+    --red:#B42318;
+    --red-soft:#FEF1F0;
+    --muted:#64748B;
+    --border:#E1E5E2;
+    --text:#16212E;
+    --grand:#7C3AED;
+    --grand-soft:#EFE7FC;
+    --y2-bg: #F0F4F8;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace; font-variant-numeric: tabular-nums;}
+  .serif{font-family:'Fraunces',serif;}
+
+  /* ---------- Top bar ---------- */
+  header.topbar{
+    background:var(--ink);
+    color:#fff;
+    padding:28px 6vw 24px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.topbar::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0;
+    height:3px;
+    background:linear-gradient(90deg, var(--teal), transparent 70%);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#8FB8CC;
+    margin-bottom:10px;
+  }
+  h1.title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(28px,4vw,42px);
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
+  }
+  .subline{
+    color:#B9C6D6;
+    font-size:14px;
+    max-width:720px;
+    line-height:1.6;
+  }
+  .currency-note{
+    margin-top:16px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18);
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:12.5px;
+    color:#DCE5EE;
+  }
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none;}
+
+  /* ---------- Layout ---------- */
+  main{padding:36px 6vw 80px;}
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+    margin-bottom:44px;
+  }
+  .kpi{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px 20px 18px;
+    position:relative;
+  }
+  .kpi .kpi-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+    display:block;
+  }
+  .kpi .kpi-value{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:24px;
+    color:var(--ink);
+    line-height:1.15;
+  }
+  .kpi .kpi-sub{
+    margin-top:6px;
+    font-size:12px;
+    color:var(--muted);
+  }
+  .kpi.accent-teal{border-top:3px solid var(--teal);}
+  .kpi.accent-amber{border-top:3px solid var(--amber);}
+  .kpi.accent-grand{border-top:3px solid var(--grand);}
+
+  section.block{margin-bottom:56px;}
+  .block-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:18px;
+    border-bottom:1px solid var(--border);
+    padding-bottom:14px;
+  }
+  .block-index{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--teal);
+    background:var(--teal-soft);
+    padding:3px 9px;
+    border-radius:6px;
+    flex:none;
+  }
+  .block-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:21px;
+    color:var(--ink);
+  }
+  .block-desc{
+    font-size:13px;
+    color:var(--muted);
+    margin-left:auto;
+    text-align:right;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  /* FX Input Control */
+  .fx-control-group {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--paper);
+    border:1px solid var(--border);
+    padding:4px 10px;
+    border-radius:8px;
+    font-size:12px;
+    color:var(--ink);
+    font-weight:500;
+  }
+  .fx-input {
+    width:56px;
+    border:1px solid var(--border);
+    background:#fff;
+    border-radius:4px;
+    padding:2px 6px;
+    font-size:12px;
+    color:var(--ink);
+    text-align:center;
+    font-weight:600;
+  }
+  .fx-input:focus {
+    outline:none;
+    border-color:var(--teal);
+    box-shadow:0 0 0 2px var(--teal-soft);
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  table{width:100%; border-collapse:collapse;}
+  thead th{
+    text-align:left;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:var(--muted);
+    background:var(--paper);
+    padding:11px 16px;
+    border-bottom:1px solid var(--border);
+  }
+  tbody td{
+    padding:12px 16px;
+    font-size:13.5px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  td.num, th.num{text-align:right; font-family:'IBM Plex Mono',monospace;}
+  tr.total-row td{
+    font-weight:700;
+    background:var(--paper);
+  }
+  tr.grand-row td{
+    font-weight:700;
+    background:var(--grand-soft);
+    color:var(--ink);
+  }
+  tr.y2-row td {
+    font-weight:600;
+    background: var(--y2-bg);
+    color: var(--ink-soft);
+    border-top: 2px solid #fff;
+  }
+  tr.y2-row.border-b-white td {
+    border-bottom: 2px solid #fff;
+  }
+  tr.sub-row td{
+    font-size:12.5px;
+    color:var(--muted);
+    background: #FAFAFA;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .three-col{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;}
+  @media(max-width:1024px){ 
+    .two-col, .three-col {grid-template-columns:1fr;} 
+  }
+
+  /* MAU tier chips */
+  .tier-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border);}
+  @media(max-width:700px){ .tier-grid{grid-template-columns:repeat(2,1fr);} }
+  .tier-cell{
+    background:var(--card);
+    padding:16px;
+    text-align:center;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .tier-cell.active{background:var(--teal-soft);}
+  .tier-cell .tier-name{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+  .tier-cell.active .tier-name{color:var(--teal); font-weight:600;}
+  .tier-cell .tier-range{font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin-top:6px; color:var(--ink);}
+
+  /* Marketing budget */
+  .mkt-table input, .mkt-table select{
+    width:100%;
+    border:1px solid transparent;
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    padding:6px 8px;
+    border-radius:6px;
+    color:var(--text);
+  }
+  .mkt-table input.amount{font-family:'IBM Plex Mono',monospace; text-align:right;}
+  .mkt-table input:hover, .mkt-table select:hover{border-color:var(--border); background:#fff;}
+  .mkt-table input:focus, .mkt-table select:focus{
+    outline:none; border-color:var(--teal); background:#fff;
+    box-shadow:0 0 0 3px var(--teal-soft);
+  }
+  .row-actions button{
+    border:none; background:none; cursor:pointer; color:var(--muted); font-size:16px; line-height:1;
+    padding:4px 8px; border-radius:6px;
+  }
+  .row-actions button:hover{color:var(--red); background:var(--red-soft);}
+  .add-row-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    margin:14px 16px 18px;
+    border:1px dashed var(--border);
+    background:none;
+    color:var(--teal);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    padding:9px 14px;
+    border-radius:99px;
+    cursor:pointer;
+  }
+  .add-row-btn:hover{background:var(--teal-soft); border-color:var(--teal);}
+  .save-state{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    margin-left:16px;
+  }
+
+  footer{
+    padding:28px 6vw 40px;
+    border-top:1px solid var(--border);
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.7;
+  }
+  footer b{color:var(--ink);}
+
+  /* --- Extracted Inline Styles & Helpers --- */
+  .col-item { width: 32%; }
+  .col-amount { width: 16%; }
+  .col-currency { width: 10%; }
+  .col-owner { width: 18%; }
+  .col-action { width: 40px; }
+  
+  .note-flex {
+    display: flex; 
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .note-flex-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .flex-center {
+    display: flex; 
+    align-items: center;
+  }
+  .total-highlight {
+    font-size: 15px; 
+    font-weight: 700; 
+    color: var(--ink);
+  }
+  .tier-hint {
+    padding: 14px 16px 0; 
+    font-family: 'IBM Plex Mono', monospace; 
+    font-size: 10.5px; 
+    letter-spacing: .07em; 
+    text-transform: uppercase; 
+    color: var(--muted);
+  }
+  .footer-margin {
+    margin-top: 4px;
+  }
+  
+  /* --- Utility Classes --- */
+  .margin-b-24 { margin-bottom: 24px; }
+  .margin-t-18 { margin-top: 18px; }
+  .pb-4 { padding-bottom: 4px; }
+  .pt-12-pb-4 { padding-top: 12px; padding-bottom: 4px; }
+  
+  .text-red { color: var(--red); }
+  .text-teal { color: var(--teal); }
+  .text-teal-bold { color: var(--teal); font-weight: 600; }
+  .text-grand-bold { color: var(--grand); font-weight: 700; }
+  .text-muted { color: var(--muted); font-size: 12px; }
+  .bg-teal { background: var(--teal); }
+  .bg-ink { background: var(--ink); }
+
+  .strategy-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .strategy-card.recommended {
+    border: 2px solid var(--teal);
+    background: #F4FAF9;
+    position: relative;
+  }
+  .strategy-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: var(--teal);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+  }
+  .strat-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--ink); }
+  .strat-desc { font-size: 13px; line-height: 1.5; color: var(--muted); }
+  .strat-row { display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed var(--border); padding-top: 10px; }
+  .strat-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .strat-value { font-size: 13px; font-weight: 500; color: var(--text); }
+  
+  /* --- Pricing Audit & Calculator --- */
+  .audit-strip {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin:14px 0 20px;
+  }
+  @media(max-width:900px){ .audit-strip{grid-template-columns:1fr;} }
+  .audit-item{
+    background:#fff; border:1px solid var(--border); border-radius:10px; padding:13px 14px;
+    font-size:12.5px; line-height:1.5; color:var(--muted);
+  }
+  .audit-item b{color:var(--ink);}
+  .calc-panel{
+    padding:14px 16px; background:#F7FBFA; border-bottom:1px solid var(--border);
+  }
+  .calc-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .calc-row label{font-size:12px; font-weight:600; color:var(--ink);}
+  .calc-row input{
+    width:110px; border:1px solid var(--border); border-radius:7px; padding:7px 9px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink); background:#fff;
+  }
+  .calc-hint{margin-top:8px; font-size:11.5px; color:var(--muted); line-height:1.5;}
+  .tbc{
+    display:inline-block; padding:2px 7px; border-radius:999px; background:var(--amber-soft);
+    color:var(--amber); font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700;
+  }
+  .confirmed{
+    display:inline-block; padding:2px 7px; border-radius:999px; background:var(--teal-soft);
+    color:var(--teal); font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700;
+  }
+  .warning-box{
+    margin:14px 16px 16px; padding:12px 13px; border:1px solid #F2C38B; background:var(--amber-soft);
+    border-radius:9px; font-size:12px; line-height:1.55; color:#7A4A14;
+  }
+  .formula-note{
+    padding:11px 16px; border-top:1px solid var(--border); background:#FAFAFA;
+    font-family:'IBM Plex Mono',monospace; font-size:10.8px; line-height:1.6; color:var(--muted);
+  }
+  .section-subtitle{
+    margin:22px 0 10px; font-family:'Fraunces',serif; font-size:17px; font-weight:600; color:var(--ink);
+  }
+  .full-width-card{margin-top:18px;}
+  .nowrap{white-space:nowrap;}
+
+  .vendor-header {
+    color: #fff;
+    padding: 16px;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .vendor-header.warning {
+    background: var(--red);
+  }
+
+  /* ---------- Executive view tabs ---------- */
+  .dashboard-nav{
+    margin: 0 0 28px;
+    background:#E9ECEB;
+    border:1px solid #D3D8D6;
+    border-radius:16px;
+    padding:18px 16px 14px;
+  }
+  .dashboard-nav-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .dashboard-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .dashboard-tab{
+    border:none;
+    background:transparent;
+    color:#5A728E;
+    padding:10px 14px;
+    border-radius:10px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .18s ease;
+  }
+  .dashboard-tab:hover{
+    background:#F4F7FA;
+    color:var(--ink);
+  }
+  .dashboard-tab.active{
+    background:var(--ink);
+    color:#fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.08);
+  }
+  .dashboard-tab:focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:2px;
+  }
+  .view-spacer{margin-bottom:30px;}
+  .vendor-card-grid.focus-single{grid-template-columns:1fr;}
+
+  body[data-view="wise1"] #strategyOverview,
+  body[data-view="wise1"] #innovOptionalSection,
+  body[data-view="wise1"] #vendorConfirmSection,
+  body[data-view="wise1"] #auditStrip,
+  body[data-view="wise1"] #wisePrepaidCard,
+  body[data-view="wise1"] #innov8tifCard,
+  body[data-view="wise1"] #infra,
+  body[data-view="wise1"] #marketing{display:none;}
+
+  body[data-view="wise2"] #strategyOverview,
+  body[data-view="wise2"] #innovOptionalSection,
+  body[data-view="wise2"] #vendorConfirmSection,
+  body[data-view="wise2"] #auditStrip,
+  body[data-view="wise2"] #wisePostpaidCard,
+  body[data-view="wise2"] #innov8tifCard,
+  body[data-view="wise2"] #infra,
+  body[data-view="wise2"] #marketing{display:none;}
+
+  body[data-view="innov8tif"] #strategyOverview,
+  body[data-view="innov8tif"] #vendorConfirmSection,
+  body[data-view="innov8tif"] #auditStrip,
+  body[data-view="innov8tif"] #wisePostpaidCard,
+  body[data-view="innov8tif"] #wisePrepaidCard,
+  body[data-view="innov8tif"] #infra,
+  body[data-view="innov8tif"] #marketing{display:none;}
+
+  body[data-view="mydigitalid"] #vendorComparisonSection,
+  body[data-view="mydigitalid"] #infra,
+  body[data-view="mydigitalid"] #marketing{display:none;}
+
+  body[data-view="fullcomparison"] #infra,
+  body[data-view="fullcomparison"] #marketing{display:none;}
+
+  body[data-view="aws"] #ekyc-strategy,
+  body[data-view="aws"] #marketing{display:none;}
+
+  body[data-view="marketing"] #ekyc-strategy,
+  body[data-view="marketing"] #infra{display:none;}
+
+  body[data-view="wise1"] #vendorCardGrid,
+  body[data-view="wise2"] #vendorCardGrid,
+  body[data-view="innov8tif"] #vendorCardGrid{grid-template-columns:1fr;}
+
+</style>
+</head>
+<body data-view="wise1">
+
+<header class="topbar">
+  <div class="eyebrow">Financial Dashboard · Executive Audit Report</div>
+  <h1 class="title">Strategic Financial & eKYC Dashboard</h1>
+  <div class="subline">eKYC Vendor Comparison (WISE AI vs Innov8tif), MyDigital ID Hybrid Strategy, and AWS Infrastructure Cost Projections.</div>
+  <div class="currency-note"><span class="dot"></span> Currencies: AWS (USD) | eKYC Vendor (RM) | Adjustable FX Rate</div>
+</header>
+
+<main>
+
+  <div class="dashboard-nav view-spacer">
+    <div class="dashboard-nav-label">Select Executive Dashboard View</div>
+    <div class="dashboard-tabs" role="tablist" aria-label="Executive dashboard views">
+      <button class="dashboard-tab active" type="button" data-view="wise1">1. WISE AI · Plan 1</button>
+      <button class="dashboard-tab" type="button" data-view="wise2">2. WISE AI · Plan 2</button>
+      <button class="dashboard-tab" type="button" data-view="innov8tif">3. Innov8tif · EMAS eKYC</button>
+      <button class="dashboard-tab" type="button" data-view="mydigitalid">4. MyDigital ID · Free</button>
+      <button class="dashboard-tab" type="button" data-view="fullcomparison">5. Full Vendor Comparison (All 4)</button>
+      <button class="dashboard-tab" type="button" data-view="aws">6. AWS Infrastructure Cost</button>
+      <button class="dashboard-tab" type="button" data-view="marketing">7. Marketing Launch Budget</button>
+    </div>
+  </div>
+  <!-- KPI Overview -->
+  <div class="kpi-row" id="kpiOverview">
+    <div class="kpi accent-grand">
+      <span class="kpi-label">Hybrid Strategy</span>
+      <div class="kpi-value mono">MyDigital ID</div>
+      <div class="kpi-sub">Free Integration → Premium "Blue Badge" Monetization</div>
+    </div>
+    <div class="kpi accent-teal">
+      <span class="kpi-label">Min. Setup (WISE AI)</span>
+      <div class="kpi-value mono">RM 18,000</div>
+      <div class="kpi-sub">Postpaid · Admin Console & BNM Report Included</div>
+    </div>
+    <div class="kpi accent-amber">
+      <span class="kpi-label" id="kpiInfraLabel">AWS Infra (1K MAU)</span>
+      <div class="kpi-value mono" id="kpiInfra">RM 916.32 – RM 2,511.42</div>
+      <div class="kpi-sub" id="kpiInfraSub">($224.04 – $614.04 USD) · Front-End Fixed + Dynamic Back-End</div>
+    </div>
+  </div>
+
+  <!-- ================= Section 1: EKYC Strategy ================= -->
+  <section class="block" id="ekyc-strategy">
+    <div id="strategyOverview">
+    <div class="block-head">
+      <span class="block-index">01</span>
+      <span class="block-title">eKYC Integration Strategy</span>
+      <span class="block-desc">Balancing Acquisition & Security</span>
+    </div>
+    
+    <div class="three-col margin-b-24 margin-t-18">
+      <div class="strategy-card">
+        <div class="strat-title">Strategy 1: MyDigital ID Only</div>
+        <div class="strat-desc">Mandatory MyDigital ID login for all users.</div>
+        <div class="strat-row"><span class="strat-label">Cost</span><span class="strat-value">Free (Government API)</span></div>
+        <div class="strat-row"><span class="strat-label">Adoption</span><span class="strat-value text-red">Low (High Drop-off)</span></div>
+      </div>
+      
+      <div class="strategy-card">
+        <div class="strat-title">Strategy 2: Commercial eKYC</div>
+        <div class="strat-desc">Third-party face & IC verification system.</div>
+        <div class="strat-row"><span class="strat-label">Cost</span><span class="strat-value text-red">High (Subscription & Per-Scan)</span></div>
+        <div class="strat-row"><span class="strat-label">Adoption</span><span class="strat-value text-teal">High (Seamless UX)</span></div>
+      </div>
+      
+      <div class="strategy-card recommended">
+        <div class="strategy-badge">RECOMMENDED</div>
+        <div class="strat-title">Strategy 3: Hybrid Model</div>
+        <div class="strat-desc">Email/Google login + Optional MyDigital ID "Blue Badge".</div>
+        <div class="strat-row"><span class="strat-label">Cost</span><span class="strat-value">Moderate (Low Setup + Free API)</span></div>
+        <div class="strat-row"><span class="strat-label">Monetization</span><span class="strat-value text-grand-bold">Premium Badge Sales</span></div>
+      </div>
+    </div>
+
+    </div>
+
+    <div id="vendorComparisonSection">
+    <!-- ================= Section 2: Full Audit Vendor Comparison ================= -->
+    <div class="block-head margin-t-18">
+      <span class="block-index">02</span>
+      <span class="block-title">eKYC Vendor Comparison</span>
+      <span class="block-desc">Confirmed quotation logic · 8% SST applied</span>
+    </div>
+
+    <div class="audit-strip" id="auditStrip">
+      <div class="audit-item"><b>WISE Postpaid:</b> monthly actual usage determines one rate for that month. Minimum billing = 100 transactions/month.</div>
+      <div class="audit-item"><b>WISE Prepaid:</b> RM12,000/year includes 5,000 transactions. Any usage above 5,000 is <span class="tbc">TBC</span>, not assumed.</div>
+      <div class="audit-item"><b>Innov8tif:</b> prepaid credits + annual cloud + implementation. Credits valid 1 year and non-refundable.</div>
+    </div>
+
+    <div class="three-col vendor-card-grid" id="vendorCardGrid">
+      <!-- WISE AI PLAN 1 (Postpaid) -->
+      <div class="card" id="wisePostpaidCard">
+        <div class="vendor-header bg-teal">WISE AI - Plan 1 (Postpaid)</div>
+        <div class="calc-panel">
+          <div class="calc-row">
+            <label for="wiseMonthlyTxn">Monthly eKYC transactions</label>
+            <input id="wiseMonthlyTxn" type="number" min="0" step="1" value="500">
+            <span class="confirmed">SCENARIO</span>
+          </div>
+          <div class="calc-hint">Assumes the same transaction volume every month for the annual projection. Change the number to test another monthly usage level.</div>
+        </div>
+        <table>
+          <thead><tr><th>Cost Item</th><th class="num">Amount (RM)</th></tr></thead>
+          <tbody>
+            <tr><td>Setup & Implementation (Y1 only)</td><td class="num mono">18,000.00</td></tr>
+            <tr><td>Selected Monthly Tier</td><td class="num mono" id="wiseTierLabel">0–500 @ 3.00</td></tr>
+            <tr><td>Billed Transactions / Month</td><td class="num mono" id="wiseBilledTxn">500</td></tr>
+            <tr><td>Monthly Usage (before SST)</td><td class="num mono" id="wiseMonthlyNet">1,500.00</td></tr>
+            <tr><td>Monthly Usage (incl. 8% SST)</td><td class="num mono" id="wiseMonthlyGross">1,620.00</td></tr>
+            <tr><td>12-Month Usage (before SST)</td><td class="num mono" id="wiseAnnualUsage">18,000.00</td></tr>
+            <tr class="total-row"><td>Year 1 Net Total</td><td class="num mono" id="wiseY1Net">36,000.00</td></tr>
+            <tr class="grand-row"><td>Year 1 Total incl. 8% SST</td><td class="num mono" id="wiseY1Gross">38,880.00</td></tr>
+            <tr class="y2-row"><td>Year 2+ Net (RM5k maintenance + usage)</td><td class="num mono" id="wiseY2Net">23,000.00</td></tr>
+            <tr class="y2-row"><td>Year 2+ Total incl. 8% SST</td><td class="num mono" id="wiseY2Gross">24,840.00</td></tr>
+          </tbody>
+        </table>
+        <div class="formula-note">Monthly rate is NOT progressive. Example: 800 txn → all 800 × RM2.80. Minimum charge: max(actual txn, 100).</div>
+      </div>
+
+      <!-- WISE AI PLAN 2 (Prepaid Package) -->
+      <div class="card" id="wisePrepaidCard">
+        <div class="vendor-header bg-ink">WISE AI - Plan 2 (Prepaid)</div>
+        <table>
+          <thead><tr><th>Cost Item</th><th class="num">Amount (RM)</th></tr></thead>
+          <tbody>
+            <tr><td>Setup & Implementation (Y1 only)</td><td class="num mono">18,000.00</td></tr>
+            <tr><td>Annual SaaS Package</td><td class="num mono">12,000.00</td></tr>
+            <tr><td>Included Transactions</td><td class="num mono">5,000 / year</td></tr>
+            <tr><td>Package Validity</td><td class="num mono">1 year</td></tr>
+            <tr class="total-row"><td>Year 1 Net Total</td><td class="num mono">30,000.00</td></tr>
+            <tr class="grand-row"><td>Year 1 Total incl. 8% SST</td><td class="num mono">32,400.00</td></tr>
+            <tr class="y2-row"><td>Year 2+ Net (SaaS + RM5k maintenance)</td><td class="num mono">17,000.00</td></tr>
+            <tr class="y2-row"><td>Year 2+ Total incl. 8% SST</td><td class="num mono">18,360.00</td></tr>
+            <tr><td>Usage above 5,000</td><td class="num"><span class="tbc">VENDOR TBC</span></td></tr>
+            <tr><td>Unused quota carry-forward</td><td class="num"><span class="tbc">VENDOR TBC</span></td></tr>
+          </tbody>
+        </table>
+        <div class="formula-note">Effective cost if all 5,000 are used: Y1 RM32,400 ÷ 5,000 = RM6.48/txn; Y2 RM18,360 ÷ 5,000 = RM3.672/txn. These are blended costs, not vendor unit prices.</div>
+        <div class="warning-box"><b>Do not assume</b> an extra 5,000 transactions costs another RM12,000. The quotation summary provided does not state top-up quantity, rate, or expiry treatment.</div>
+      </div>
+
+      <!-- INNOV8TIF (Modular Prepaid) -->
+      <div class="card" id="innov8tifCard">
+        <div class="vendor-header warning">Innov8tif - Base Onboarding</div>
+        <table>
+          <thead><tr><th>Cost Item</th><th class="num">Amount (RM)</th></tr></thead>
+          <tbody>
+            <tr><td colspan="2" class="text-teal-bold pb-4">10,000 Credit Tier</td></tr>
+            <tr class="sub-row"><td>↳ 10k Credits @ RM2.80</td><td class="num mono">28,000.00</td></tr>
+            <tr class="sub-row"><td>↳ Annual Cloud Service</td><td class="num mono">5,000.00</td></tr>
+            <tr class="sub-row"><td>↳ Implementation (10 mandays)</td><td class="num mono">19,000.00</td></tr>
+            <tr class="total-row"><td>10k Year 1 Net</td><td class="num mono">52,000.00</td></tr>
+            <tr class="grand-row"><td>10k Year 1 incl. 8% SST</td><td class="num mono">56,160.00</td></tr>
+            <tr class="y2-row"><td>10k Year 2+ incl. 8% SST</td><td class="num mono">35,640.00</td></tr>
+            <tr><td colspan="2" class="text-teal-bold pt-12-pb-4">20,000 Credit Tier</td></tr>
+            <tr class="sub-row"><td>↳ 20k Credits @ RM2.70</td><td class="num mono">54,000.00</td></tr>
+            <tr class="total-row"><td>20k Year 1 Net (+ Cloud + Implementation)</td><td class="num mono">78,000.00</td></tr>
+            <tr class="grand-row"><td>20k Year 1 incl. 8% SST</td><td class="num mono">84,240.00</td></tr>
+            <tr class="y2-row"><td>20k Year 2+ incl. 8% SST</td><td class="num mono">63,720.00</td></tr>
+          </tbody>
+        </table>
+        <div class="formula-note">Credits are prepaid, valid 1 year and non-refundable. Reload is allowed based on committed tier, but minimum reload quantity and reload expiry are TBC.</div>
+      </div>
+    </div>
+
+    <div id="innovOptionalSection">
+    <div class="section-subtitle">Innov8tif Optional Modules & Quotation Risks</div>
+    <div class="card full-width-card">
+      <table>
+        <thead><tr><th>Optional Item</th><th>Quoted Logic</th><th class="num">Total incl. 8% SST</th><th>Status / Note</th></tr></thead>
+        <tbody>
+          <tr><td>Re-authentication · 20k</td><td>20,000 × RM1.40 + RM5,000 Annual Cloud</td><td class="num mono">35,640.00</td><td><span class="confirmed">QUOTED</span></td></tr>
+          <tr><td>Re-authentication · 50k</td><td>50,000 × RM1.30 + RM5,000 Annual Cloud</td><td class="num mono">75,600.00</td><td><span class="confirmed">QUOTED</span></td></tr>
+          <tr><td>Facial Blacklist · 10k</td><td>10,000 × RM0.53 + RM5,000 Annual Cloud</td><td class="num mono">11,124.00</td><td><span class="confirmed">QUOTED</span></td></tr>
+          <tr><td>Facial Blacklist · 20k</td><td>20,000 × RM0.50 + RM5,000 Annual Cloud</td><td class="num mono">16,200.00</td><td><span class="confirmed">QUOTED</span></td></tr>
+          <tr><td>Blacklist + De-duplication</td><td>Quotation states “double charges”</td><td class="num"><span class="tbc">TBC</span></td><td>Need vendor to confirm whether only usage credits double or annual subscription also doubles.</td></tr>
+          <tr><td>HIP Portal</td><td>RM68,000 server licence / 1 Production Server / without HA</td><td class="num mono">73,440.00</td><td>Optional</td></tr>
+          <tr><td>Full Optional Implementation</td><td>36 mandays × RM1,900 = RM68,400</td><td class="num mono">73,872.00</td><td><span class="tbc">TBC RELATIONSHIP</span> to basic RM19,000 implementation</td></tr>
+        </tbody>
+      </table>
+      <div class="warning-box"><b>Important budgeting rule:</b> do not add RM19,000 + RM68,400 automatically and do not subtract RM19,000 automatically. The proposal summary does not explicitly state whether RM68,400 supersedes the basic implementation. Confirm with Innov8tif before final budget sign-off.</div>
+    </div>
+
+    </div>
+
+    <div id="vendorConfirmSection">
+    <div class="section-subtitle">Vendor Confirmation Required Before Final Budget</div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Vendor</th><th>Question to Confirm</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>WISE Prepaid</td><td>Price and minimum quantity for top-up after 5,000 included transactions</td><td><span class="tbc">TBC</span></td></tr>
+          <tr><td>WISE Prepaid</td><td>Whether unused transactions can carry forward</td><td><span class="tbc">TBC</span></td></tr>
+          <tr><td>Innov8tif</td><td>Minimum reload quantity and reload unit rate</td><td><span class="tbc">TBC</span></td></tr>
+          <tr><td>Innov8tif</td><td>Whether reloaded credits keep original expiry or receive a new validity period</td><td><span class="tbc">TBC</span></td></tr>
+          <tr><td>Innov8tif</td><td>Scope of “double charges” for Blacklist + De-duplication</td><td><span class="tbc">TBC</span></td></tr>
+          <tr><td>Innov8tif</td><td>Whether RM68,400 full implementation replaces or adds to RM19,000 basic implementation</td><td><span class="tbc">TBC</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ================= Section 3: Infrastructure Cost ================= -->
+  <section class="block" id="infra">
+    <div class="block-head">
+      <span class="block-index">03</span>
+      <span class="block-title">Infrastructure Cost · AWS Infrastructure</span>
+      <div class="block-desc">
+        <span>Internal Tech Estimates</span>
+        <div class="fx-control-group">
+          <label for="fxInput">FX (USD to MYR):</label>
+          <input type="number" id="fxInput" class="fx-input mono" value="4.09" step="0.01" min="3.00" max="6.00">
+        </div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <table>
+          <thead><tr><th>Front-End Services</th><th class="num">Cost / Month</th></tr></thead>
+          <tbody>
+            <tr><td>AWS EC2</td><td class="num mono">$40.00</td></tr>
+            <tr><td>AWS EBS</td><td class="num mono">$6.00</td></tr>
+            <tr><td>AWS API Gateway</td><td class="num mono">$10.00</td></tr>
+            <tr><td>AWS CloudFront</td><td class="num mono">$5.00</td></tr>
+            <tr><td>AWS Route 53</td><td class="num mono">$1.50</td></tr>
+            <tr><td>AWS Snapshots</td><td class="num mono">$8.00</td></tr>
+            <tr><td>AWS CloudWatch</td><td class="num mono">$12.00</td></tr>
+            <tr><td>Domain</td><td class="num mono">$1.54</td></tr>
+            <tr class="total-row"><td>Total (USD)</td><td class="num mono">$84.04</td></tr>
+            <tr class="grand-row"><td>Total (MYR / RM)</td><td class="num mono" id="frontEndMYR">RM 343.72</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="tier-hint">Back-End Scale Tier · Click to Select</div>
+        <div class="tier-grid" id="tierGrid">
+          <div class="tier-cell active" data-mau="1k"><div class="tier-name">1k MAU</div><div class="tier-range mono">$140–$530</div></div>
+          <div class="tier-cell" data-mau="5k"><div class="tier-name">5k MAU</div><div class="tier-range mono">$460–$1,570</div></div>
+          <div class="tier-cell" data-mau="10k"><div class="tier-name">10k MAU</div><div class="tier-range mono">$915–$3,725</div></div>
+          <div class="tier-cell" data-mau="50k"><div class="tier-name">50k MAU</div><div class="tier-range mono">$5,030–$18,390++</div></div>
+        </div>
+        <table>
+          <thead><tr><th>Back-End Services</th><th class="num" id="tierColHead">1k MAU</th></tr></thead>
+          <tbody id="backendBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Section 4: Marketing Budget ================= -->
+  <section class="block" id="marketing">
+    <div class="block-head">
+      <span class="block-index">04</span>
+      <span class="block-title">Marketing Launch Budget</span>
+      <span class="block-desc">Dynamic Calculation Table</span>
+    </div>
+    <div class="card">
+      <table class="mkt-table">
+        <thead>
+          <tr>
+            <th class="col-item">Item</th>
+            <th class="num col-amount">Amount</th>
+            <th class="col-currency">Currency</th>
+            <th class="col-owner">Owner</th>
+            <th>Notes</th>
+            <th class="col-action"></th>
+          </tr>
+        </thead>
+        <tbody id="mktBody"></tbody>
+      </table>
+      <button class="add-row-btn" id="addMktRow">+ Add line item</button>
+      <div class="note-flex note-flex-row">
+        <span>Marketing Total</span>
+        <span class="flex-center">
+          <span class="mono total-highlight" id="mktTotal">RM 0.00</span>
+          <span class="save-state" id="mktSaveState"></span>
+        </span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div><b>Sources:</b> [1] WISE AI Proposal Q-NLSB-CSS-260622-1/2 ; [2] Innov8tif Commercial Proposal ; [3] AWS Cost Specs.</div>
+  <div class="footer-margin">Based on vendor quotation figures supplied for this dashboard. Items marked TBC require vendor confirmation before final budgeting.</div>
+</footer>
+
+<script>
+(function(){
+  // Dynamic Exchange Rate State (Default 4.09)
+  let fxRate = 4.09;
+  const fxInputEl = document.getElementById('fxInput');
+
+  // ---------------- WISE Postpaid Monthly Scenario Calculator ----------------
+  const wiseMonthlyTxnEl = document.getElementById('wiseMonthlyTxn');
+
+  function wisePostpaidRate(txn){
+    if (txn <= 500) return { rate: 3.00, label: '0–500 @ 3.00' };
+    if (txn <= 1000) return { rate: 2.80, label: '501–1,000 @ 2.80' };
+    if (txn <= 1500) return { rate: 2.50, label: '1,001–1,500 @ 2.50' };
+    if (txn <= 4000) return { rate: 2.10, label: '1,501–4,000 @ 2.10' };
+    return { rate: 1.80, label: '>4,000 @ 1.80' };
+  }
+
+  function fmtRM(n){
+    return Number(n).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function renderWisePostpaid(){
+    if (!wiseMonthlyTxnEl) return;
+    const actual = Math.max(0, Math.floor(parseFloat(wiseMonthlyTxnEl.value) || 0));
+    const billed = Math.max(actual, 100);
+    const tier = wisePostpaidRate(actual);
+    const monthlyNet = billed * tier.rate;
+    const monthlyGross = monthlyNet * 1.08;
+    const annualUsage = monthlyNet * 12;
+    const y1Net = 18000 + annualUsage;
+    const y1Gross = y1Net * 1.08;
+    const y2Net = 5000 + annualUsage;
+    const y2Gross = y2Net * 1.08;
+
+    document.getElementById('wiseTierLabel').textContent = tier.label;
+    document.getElementById('wiseBilledTxn').textContent = billed.toLocaleString('en-MY');
+    document.getElementById('wiseMonthlyNet').textContent = fmtRM(monthlyNet);
+    document.getElementById('wiseMonthlyGross').textContent = fmtRM(monthlyGross);
+    document.getElementById('wiseAnnualUsage').textContent = fmtRM(annualUsage);
+    document.getElementById('wiseY1Net').textContent = fmtRM(y1Net);
+    document.getElementById('wiseY1Gross').textContent = fmtRM(y1Gross);
+    document.getElementById('wiseY2Net').textContent = fmtRM(y2Net);
+    document.getElementById('wiseY2Gross').textContent = fmtRM(y2Gross);
+  }
+
+  if (wiseMonthlyTxnEl) wiseMonthlyTxnEl.addEventListener('input', renderWisePostpaid);
+  renderWisePostpaid();
+
+  // ---------------- AWS MAU Data ----------------
+  const mauData = {
+    "1k":  { front: 84.04, low: 140,  high: 530,   plus:false, rows: ["$0","$2 - $25","$0 - $5","$5 - $15","$2 - $10","$100 - $400","$5 - $20","$0 - $5","$5 - $20"] },
+    "5k":  { front: 84.04, low: 460,  high: 1570,  plus:false, rows: ["$0","$15 - $50","$2 - $15","$15 - $40","$5 - $20","$300 - $1,200","$10 - $40","$5 - $15","$10 - $40"] },
+    "10k": { front: 84.04, low: 915,  high: 3725,  plus:false, rows: ["$0","$40 - $120","$5 - $25","$30 - $80","$10 - $35","$600 - $3,000","$20 - $60","$10 - $25","$20 - $80"] },
+    "50k": { front: 84.04, low: 5030, high: 18390, plus:true,  rows: ["$600","$200 - $500","$15 - $60","$80 - $200","$25 - $100","$3,000 - $15,000++","$40 - $150","$20 - $80","$50 - $200"] },
+  };
+  const backendServices = ["Authentication (Cognito)","API & Real-Time (AppSync)","Compute (Lambda)","Database (DynamoDB)","Storage (S3)","AI Companion & Assistance","Monitoring & Logs","Notifications & Messaging","Data Transfer & Misc"];
+
+  let currentMau = "1k";
+
+  function renderMau(){
+    const m = mauData[currentMau];
+    document.getElementById('tierColHead').textContent = currentMau.toUpperCase() + " MAU";
+    const body = document.getElementById('backendBody');
+    
+    // Front-end MYR conversion
+    const frontMYR = (m.front * fxRate).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('frontEndMYR').textContent = `RM ${frontMYR}`;
+
+    // Back-end MYR conversion
+    const lowMYR = (m.low * fxRate).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const highMYR = (m.high * fxRate).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+    body.innerHTML = backendServices.map((s,i) => `<tr><td>${s}</td><td class="num mono">${m.rows[i]}</td></tr>`).join('')
+      + `<tr class="total-row"><td>Total (USD)</td><td class="num mono">$${m.low.toLocaleString()} - $${m.high.toLocaleString()}${m.plus?'++':''}</td></tr>`
+      + `<tr class="grand-row"><td>Total (MYR / RM)</td><td class="num mono">RM ${lowMYR} - RM ${highMYR}${m.plus?'++':''}</td></tr>`;
+
+    document.querySelectorAll('.tier-cell').forEach(c => c.classList.toggle('active', c.dataset.mau === currentMau));
+
+    // USD Total
+    const infraLowUSD = (m.front + m.low).toFixed(2);
+    const infraHighUSD = (m.front + m.high).toFixed(2);
+
+    // MYR Total for Top KPI Card
+    const infraLowMYR = ((m.front + m.low) * fxRate).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const infraHighMYR = ((m.front + m.high) * fxRate).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    
+    // Dynamic update for top KPI card
+    document.getElementById('kpiInfra').textContent = `RM ${infraLowMYR} – RM ${infraHighMYR}${m.plus?'++':''}`;
+    document.getElementById('kpiInfraSub').textContent = `($${Number(infraLowUSD).toLocaleString('en-US',{minimumFractionDigits:2})} – $${Number(infraHighUSD).toLocaleString('en-US',{minimumFractionDigits:2})} USD) · Front-End Fixed + Back-End`;
+    document.getElementById('kpiInfraLabel').textContent = `AWS Infra (${currentMau.toUpperCase()} MAU)`;
+  }
+
+  // FX Rate dynamic changes listener
+  fxInputEl.addEventListener('input', e => {
+    const val = parseFloat(e.target.value);
+    if (!isNaN(val) && val > 0) {
+      fxRate = val;
+      renderMau();
+    }
+  });
+
+  document.getElementById('tierGrid').addEventListener('click', e => {
+    const cell = e.target.closest('.tier-cell'); if(!cell) return;
+    currentMau = cell.dataset.mau;
+    renderMau();
+  });
+
+  renderMau();
+
+  // ---------------- Marketing budget (persisted) ----------------
+  const defaultRows = [
+    { id: 'row_ads',   item: 'Digital Ads / Performance Marketing', amount: '', currency: 'RM', owner: '', notes: '' },
+    { id: 'row_content',item: 'Content & Creative Production',      amount: '', currency: 'RM', owner: '', notes: '' },
+    { id: 'row_launch', item: 'Launch Event / PR',                  amount: '', currency: 'RM', owner: '', notes: '' },
+    { id: 'row_kol',    item: 'Influencer / KOL Partnerships',      amount: '', currency: 'RM', owner: '', notes: '' },
+  ];
+  let mktRows = [];
+  let rowSeq = 0;
+  const mktBody = document.getElementById('mktBody');
+  const mktTotalEl = document.getElementById('mktTotal');
+  const saveStateEl = document.getElementById('mktSaveState');
+
+  function newRowId(){ rowSeq += 1; return 'row_custom_' + Date.now() + '_' + rowSeq; }
+
+  function computeTotal(){
+    const total = mktRows.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+    mktTotalEl.textContent = "RM " + total.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function renderMkt(){
+    mktBody.innerHTML = mktRows.map(r => `
+      <tr data-id="${r.id}">
+        <td><input type="text" class="f-item" value="${escapeAttr(r.item)}" placeholder="Item"></td>
+        <td><input type="text" class="f-amount amount" value="${escapeAttr(r.amount)}" placeholder="0.00" inputmode="decimal"></td>
+        <td>
+          <select class="f-currency">
+            <option value="RM" ${r.currency==='RM'?'selected':''}>RM</option>
+            <option value="USD" ${r.currency==='USD'?'selected':''}>USD</option>
+          </select>
+        </td>
+        <td><input type="text" class="f-owner" value="${escapeAttr(r.owner)}" placeholder="Owner"></td>
+        <td><input type="text" class="f-notes" value="${escapeAttr(r.notes)}" placeholder="Notes"></td>
+        <td class="row-actions"><button class="del-row" title="Remove">×</button></td>
+      </tr>
+    `).join('');
+    computeTotal();
+  }
+
+  function escapeAttr(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+
+  async function saveMkt(){
+    saveStateEl.textContent = 'saving…';
+    try {
+      localStorage.setItem('marketing-budget-rows', JSON.stringify(mktRows));
+      saveStateEl.textContent = 'saved';
+    } catch (err) {
+      saveStateEl.textContent = 'save failed';
+      console.error('Storage error:', err);
+    }
+    setTimeout(() => { saveStateEl.textContent = ''; }, 1500);
+  }
+
+  mktBody.addEventListener('input', e => {
+    const tr = e.target.closest('tr'); if(!tr) return;
+    const id = tr.dataset.id;
+    const row = mktRows.find(r => r.id === id); if(!row) return;
+    if (e.target.classList.contains('f-item')) row.item = e.target.value;
+    if (e.target.classList.contains('f-amount')) row.amount = e.target.value;
+    if (e.target.classList.contains('f-owner')) row.owner = e.target.value;
+    if (e.target.classList.contains('f-notes')) row.notes = e.target.value;
+    if (e.target.classList.contains('f-currency')) row.currency = e.target.value;
+    computeTotal();
+  });
+  mktBody.addEventListener('change', saveMkt);
+  mktBody.addEventListener('click', e => {
+    if (e.target.classList.contains('del-row')) {
+      const tr = e.target.closest('tr');
+      mktRows = mktRows.filter(r => r.id !== tr.dataset.id);
+      renderMkt();
+      saveMkt();
+    }
+  });
+  document.getElementById('addMktRow').addEventListener('click', () => {
+    mktRows.push({ id: newRowId(), item: '', amount: '', currency: 'RM', owner: '', notes: '' });
+    renderMkt();
+  });
+
+  (function loadMkt(){
+    try {
+      const result = localStorage.getItem('marketing-budget-rows');
+      mktRows = result ? JSON.parse(result) : defaultRows;
+    } catch (err) {
+      mktRows = defaultRows;
+    }
+    renderMkt();
+  })();
+
+  // ---------------- Executive tabbed views ----------------
+  const dashboardTabs = Array.from(document.querySelectorAll('.dashboard-tab'));
+  const viewStorageKey = 'financial-dashboard-active-view';
+
+  function setDashboardView(view){
+    document.body.setAttribute('data-view', view);
+    dashboardTabs.forEach(btn => {
+      const active = btn.dataset.view === view;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    try { localStorage.setItem(viewStorageKey, view); } catch(err){}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  dashboardTabs.forEach(btn => {
+    btn.addEventListener('click', () => setDashboardView(btn.dataset.view));
+  });
+
+  let initialView = 'wise1';
+  try {
+    const storedView = localStorage.getItem(viewStorageKey);
+    if (storedView && dashboardTabs.some(btn => btn.dataset.view === storedView)) initialView = storedView;
+  } catch(err){}
+  setDashboardView(initialView);
+
+
+})();
+</script>
+
+</body>
+</html>
