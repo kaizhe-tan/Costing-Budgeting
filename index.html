@@ -552,6 +552,62 @@
   body[data-view="wise2"] #vendorCardGrid,
   body[data-view="innov8tif"] #vendorCardGrid{grid-template-columns:1fr;}
 
+
+  /* ---------- Refined AWS section ---------- */
+  .infra-grid{align-items:start;}
+  .infra-card{border-radius:14px; overflow:hidden; align-self:start;}
+  .infra-card-header{
+    padding:14px 16px;
+    color:#fff;
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:16px;
+    line-height:1.2;
+  }
+  .infra-card-header.fixed{background:var(--ink);}
+  .infra-card-header.variable{background:#157a70;}
+  .infra-table thead th{background:#F8FAF9;}
+  .infra-table tbody td{padding:13px 14px;}
+  .infra-table .grand-row td{background:#EDE5F7;}
+  .infra-table .total-row td{background:#FAFBFA;}
+  #infra .tier-hint{display:none;}
+  #infra .tier-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    background:var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  #infra .tier-cell{
+    background:#FFFFFF;
+    padding:14px 10px 12px;
+    text-align:center;
+    cursor:pointer;
+    transition:background .18s ease, color .18s ease;
+    min-height:74px;
+  }
+  #infra .tier-cell.active{background:#E5F0EE;}
+  #infra .tier-cell .tier-name{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  #infra .tier-cell.active .tier-name{color:#157a70;font-weight:700;}
+  #infra .tier-cell .tier-range{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:15px;
+    line-height:1.2;
+    color:var(--ink);
+    margin-top:0;
+  }
+  @media(max-width:900px){
+    #infra .tier-grid{grid-template-columns:repeat(2,1fr);}
+  }
+
 </style>
 </head>
 <body data-view="wise1">
@@ -763,8 +819,8 @@
   <!-- ================= Section 3: Infrastructure Cost ================= -->
   <section class="block" id="infra">
     <div class="block-head">
-      <span class="block-index">03</span>
-      <span class="block-title">Infrastructure Cost · AWS Infrastructure</span>
+      <span class="block-index">02</span>
+      <span class="block-title">AWS Infrastructure Cost Estimates</span>
       <div class="block-desc">
         <span>Internal Tech Estimates</span>
         <div class="fx-control-group">
@@ -773,10 +829,11 @@
         </div>
       </div>
     </div>
-    <div class="two-col">
-      <div class="card">
-        <table>
-          <thead><tr><th>Front-End Services</th><th class="num">Cost / Month</th></tr></thead>
+    <div class="two-col infra-grid">
+      <div class="card infra-card">
+        <div class="infra-card-header fixed">AWS Front-End Infrastructure (Fixed)</div>
+        <table class="infra-table">
+          <thead><tr><th>Services Item</th><th class="num">Cost / Month</th></tr></thead>
           <tbody>
             <tr><td>AWS EC2</td><td class="num mono">$40.00</td></tr>
             <tr><td>AWS EBS</td><td class="num mono">$6.00</td></tr>
@@ -791,16 +848,16 @@
           </tbody>
         </table>
       </div>
-      <div class="card">
-        <div class="tier-hint">Back-End Scale Tier · Click to Select</div>
+      <div class="card infra-card">
+        <div class="infra-card-header variable">AWS Back-End Dynamic Scale (Variable)</div>
         <div class="tier-grid" id="tierGrid">
           <div class="tier-cell active" data-mau="1k"><div class="tier-name">1k MAU</div><div class="tier-range mono">$140–$530</div></div>
           <div class="tier-cell" data-mau="5k"><div class="tier-name">5k MAU</div><div class="tier-range mono">$460–$1,570</div></div>
           <div class="tier-cell" data-mau="10k"><div class="tier-name">10k MAU</div><div class="tier-range mono">$915–$3,725</div></div>
           <div class="tier-cell" data-mau="50k"><div class="tier-name">50k MAU</div><div class="tier-range mono">$5,030–$18,390++</div></div>
         </div>
-        <table>
-          <thead><tr><th>Back-End Services</th><th class="num" id="tierColHead">1k MAU</th></tr></thead>
+        <table class="infra-table">
+          <thead><tr><th>Services Item</th><th class="num" id="tierColHead">1k MAU</th></tr></thead>
           <tbody id="backendBody"></tbody>
         </table>
       </div>
